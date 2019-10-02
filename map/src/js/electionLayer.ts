@@ -48,8 +48,7 @@ const electionLayer = new CSVLayer({
   url: "./data/election_uat_final.csv",
   copyright: "BEC, ANCPI, geo-spatial.org",
   title: "European Parliament Elections 2019 - Results in Romania",
-  renderer: renderer,
-  outFields: ["*"]
+  renderer: renderer
 });
 
 export default electionLayer;

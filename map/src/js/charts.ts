@@ -3,7 +3,6 @@ import { GraphicAttributes } from "./types";
 import partyCodes from "./partyCodes";
 declare var d3: any;
 
-
 function createInfoChart(attributes: GraphicAttributes) {
   const data = _getData(attributes);
   const total = _getTotal(attributes);
@@ -16,8 +15,8 @@ function createInfoChart(attributes: GraphicAttributes) {
   d3.select("#results").html("");
   d3.select("#results").append("div").html(attributes.name + ", " + attributes.county);
   const div = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
+    .attr("class", "tooltip")
+    .style("opacity", 0);
   const y = d3.scaleLinear()
     .range([chartHeight, margin])
     .domain([0, d3.max(data, function (d: any) { return d.value; })]);
@@ -68,7 +67,6 @@ function _getData(attr: GraphicAttributes) {
     e.value = attr[e.field];
     return e;
   });
-
 }
 
 function _getTotal(attr: GraphicAttributes) {
@@ -191,7 +189,34 @@ function _getGradientColor(color: string, hueLegend: any, i: number) {
   return "url(#i-" + i.toString() + ")";
 }
 
+function generateTotalResults() {
+  createInfoChart({
+    g1: 2031585,
+    g2: 1861655,
+    g3: 574408,
+    g4: 473062,
+    g5: 2327988,
+    g6: 368338,
+    g7: 51850,
+    g8: 492099,
+    g9: 38601,
+    g10: 25753,
+    g11: 48889,
+    g12: 52696,
+    g13: 19646,
+    g14: 96721,
+    g15: 104820,
+    g16: 122245,
+    name: "Total votes",
+    county: "Romania",
+    pred_absolute: 0,
+    pred_party: "None",
+    pred_percent: 0
+  });
+}
+
 export default {
   createInfoChart,
-  createLegend
+  createLegend,
+  generateTotalResults
 };

@@ -1,30 +1,33 @@
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
-    <title>European Parliament - Mai 2019 elections in Romania</title>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/css/main.css">
-    <link rel="stylesheet" href="./src/css/main.css">
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script>
-      var locationPath = location.pathname.replace(/\/[^\/]+$/, "/");
-      window.dojoConfig = {
-        packages: [
-          {
-            name: "app",
-            location: locationPath + "src/js/"
-          }
-        ]
-      };
-    </script>
-    <script src="https://js.arcgis.com/4.13/"></script>
 
-  </head>
-  <body>
-    <div id="viewDiv">
-      <div id="results" class="esri-widget"></div>
-      <div id="legend" class="esri-widget"></div>
-    </div>
-    <script>require(["app/main"]);</script>
-  </body>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+  <title>European Parliament - Mai 2019 elections in Romania</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/css/main.css">
+  <link rel="stylesheet" href="./src/css/main.css">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script>
+    var locationPath = location.pathname.replace(/\/[^\/]+$/, "/");
+    window.dojoConfig = {
+      packages: [
+        {
+          name: "app",
+          location: locationPath + "src/js/"
+        }
+      ]
+    };
+  </script>
+  <script src="https://js.arcgis.com/4.13/"></script>
+
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div id="results" class="esri-widget"></div>
+    <div id="legend" class="esri-widget"></div>
+  </div>
+  <script>require(["app/main"]);</script>
+</body>
+
 </html>

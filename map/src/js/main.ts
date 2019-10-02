@@ -32,7 +32,7 @@ const countryBorders = new VectorTileLayer({
   url: "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer"
 });
 
-countryBorders.loadStyle("./data/borders.json");
+countryBorders.loadStyle("./data/borders_style.json");
 
 const map = new Map({
   basemap: new Basemap({
@@ -45,9 +45,8 @@ const mapView = new MapView({
   container: "viewDiv",
   center: [24.62, 45.76],
   zoom: 7,
-  constraints: {
-    minZoom: 6,
-    maxZoom: 10
+  spatialReference: {
+    wkid: 3857
   },
   highlightOptions: {
     color: [0, 255, 255],
@@ -60,7 +59,7 @@ map.addMany([electionLayer, mainCitiesLayer]);
 const lyrViewPromise = mapView.whenLayerView(electionLayer);
 let highlight: any = null;
 
-mapView.on("click", function(event: any) {
+mapView.on("click", function (event: any) {
   mapView.hitTest(event).then(function (response) {
 
     if (response.results.length) {
@@ -71,41 +70,17 @@ mapView.on("click", function(event: any) {
         const graphic = result.graphic;
         removeHighlight();
         lyrViewPromise.then(lyrView => highlight = lyrView.highlight(graphic));
-        document.getElementById("results").style.display = "block";
         charts.createInfoChart(graphic.attributes);
-        console.log(graphic.attributes);
       }
     } else {
       removeHighlight();
-      document.getElementById("results").style.display = "none";
+      charts.generateTotalResults();
     }
   }).catch(console.error);
 
 });
 
-charts.createInfoChart({
-  g1: 2031585,
-  g2: 1861655,
-  g3: 574408,
-  g4: 473062,
-  g5: 2327988,
-  g6: 368338,
-  g7: 51850,
-  g8: 492099,
-  g9: 38601,
-  g10: 25753,
-  g11: 48889,
-  g12: 52696,
-  g13: 19646,
-  g14: 96721,
-  g15: 104820,
-  g16: 122245,
-  name: "Total votes",
-  county: "Romania",
-  pred_absolute: 0,
-  pred_party: "None",
-  pred_percent: 0
-});
+charts.generateTotalResults();
 
 
 lyrViewPromise.then(lyrView => charts.createLegend(lyrView));
