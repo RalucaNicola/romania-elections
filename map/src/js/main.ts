@@ -9,6 +9,7 @@ import electionLayer from "./electionLayer";
 
 import charts from "./charts";
 import Expand from "esri/widgets/Expand";
+import SpatialReference from "esri/geometry/SpatialReference";
 
 
 // define base layers
@@ -23,20 +24,20 @@ const municipalitiesLayer = new TileLayer({
   minScale: 1500000
 });
 
-const hillshadeLayer = new TileLayer({
-  url: "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer",
-  opacity: 1
-});
-
 const countryBorders = new VectorTileLayer({
   url: "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer"
 });
 
 countryBorders.loadStyle("./data/borders_style.json");
 
+const hillshadeLayer = new TileLayer({
+  url: "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer",
+  opacity: 0.6
+});
+
 const map = new Map({
   basemap: new Basemap({
-    baseLayers: [hillshadeLayer, countryBorders, countiesLayer, municipalitiesLayer]
+    baseLayers: [countryBorders, countiesLayer, municipalitiesLayer, hillshadeLayer]
   })
 });
 
@@ -44,10 +45,8 @@ const mapView = new MapView({
   map: map,
   container: "viewDiv",
   center: [24.62, 45.76],
-  zoom: 7,
-  spatialReference: {
-    wkid: 3857
-  },
+  zoom: 6,
+  spatialReference: SpatialReference.WebMercator,
   highlightOptions: {
     color: [0, 255, 255],
     fillOpacity: 0
