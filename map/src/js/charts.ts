@@ -9,23 +9,24 @@ function _createInfoChart(attributes: GraphicAttributes) {
   const total = _getTotal(attributes);
   d3.select("#results-chart").html("");
 
-  const barWidth = 45;
-  const width = (7 * (barWidth + 5));
+  const barWidth = 50;
+  const width = (7 * barWidth);
   const height = 150;
-  const margin = 20;
-  const chartHeight = height - margin;
-  const div = d3.select("body").append("div")
+  const verticalMargin = 20;
+  const marginRight = 10;
+  const chartHeight = height - verticalMargin;
+  const tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
   const y = d3.scaleLinear()
-    .range([chartHeight, margin])
+    .range([chartHeight, verticalMargin])
     .domain([0, d3.max(data, function (d: any) { return d.value; })]);
   const x = d3.scaleBand()
     .domain(data.map(function (e) { return e.name; }))
-    .range([0, width - margin - 15]);
+    .range([0, width]);
   const xAxis = d3.axisBottom(x);
   const chart = d3.select("#results-chart").append("svg")
-    .attr("width", width)
+    .attr("width", width + marginRight)
     .attr("height", height);
   const bar = chart.selectAll("g")
     .data(data)
@@ -37,17 +38,19 @@ function _createInfoChart(attributes: GraphicAttributes) {
     .attr("width", barWidth - barWidth / 4)
     .attr("fill", function (d: any) { return d.color; })
     .on("mousemove", function (d: any, i: number) {
-      div.transition()
+      tooltip.transition()
         .duration(100)
-        .style("opacity", .9);
-      div.html(d.value.toString() + " votes")
+        .style("opacity", .9)
+        .style("display", "inherit");
+      tooltip.html(d.value.toLocaleString() + " votes")
         .style("left", (d3.event.pageX) + "px")
-        .style("top", (d3.event.pageY - 20) + "px");
+        .style("top", (d3.event.pageY - 30) + "px");
     })
     .on("mouseout", function (d: any, i: number) {
-      div.transition()
+      tooltip.transition()
         .duration(300)
-        .style("opacity", 0);
+        .style("opacity", 0)
+        .style("display", "none");
 
     });
   bar.append("text")
