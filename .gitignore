@@ -2,3 +2,4 @@
 **/src/**/*.js*
 **/css/**/*.css*
 **/*.idea
+**/*.DS_Store
