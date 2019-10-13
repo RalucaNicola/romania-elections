@@ -1,94 +1,111 @@
 import pandas as pd
-import numpy as np
 
-url = r"C:/dev/demo-apps/romania-elections/data-processing/"
+'''
+Part 1. Read in spatial dataset and election results
+'''
+
+url_original = r"/Library/WebServer/Documents/romania-elections/original-data/"
+url_processed = r"/Library/WebServer/Documents/romania-elections/map/data/"
+
 # spatial dataset - centroids of administrative units
-sd = pd.read_csv(url + "ro_uat_point.csv", usecols = ["name", "county", "Longitude", "Latitude"])
+spatial_df = pd.read_csv(url_original + "ro_uat_point.csv", usecols=["name", "county", "Longitude", "Latitude"])
+
 # election dataset - results from election
-ed = pd.read_csv(url + "pv_RO_EUP_FINAL.csv", usecols = ["Județ", "Uat", "g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10", "g11", "g12", "g13", "g14", "g15", "g16"])
+columns = ["g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10", "g11", "g12", "g13", "g14", "g15", "g16"]
+elect_df = pd.read_csv(url_original + "pv_RO_EUP_FINAL.csv", usecols=["Județ", "Uat"] + columns)
+
+'''
+Part 2. Prepare data for merge:
+ - group the results by administrative unit
+ - create new columns by joining uat name and county (to have a unique uat)
+ - remove special signs and replace diacritics
+ - sort dataframe by the new column (uat and county)
+ - find the names that don't match and manually correct them
+'''
+
 
 # group results from election by admin units - 3185 admin units after grouping
-g_ed = ed.groupby(by = ["Uat", "Județ"]).agg({"g1": "sum", "g2": "sum", "g3": "sum", "g4": "sum", "g5": "sum", "g6": "sum", "g7": "sum", "g8": "sum", "g9": "sum", "g10": "sum", "g11": "sum", "g12": "sum", "g13": "sum", "g14": "sum", "g15": "sum", "g16": "sum"}).reset_index()
+sum_parties = {col: "sum" for col in columns}
+elect_df = elect_df.groupby(by=["Uat", "Județ"]).agg(sum_parties).reset_index()
 
-# transform data in both columns to make them match (remove all spaces/slashes/diacritic letters
+# transform data in both columns to make them match (remove all spaces/slashes/diacritic letters)
 
 # duplicate column to keep not mess up the original name
-g_ed["name_uat"] = (g_ed["Uat"] + g_ed["Județ"]).transform(lambda s: s.replace(" ", "").replace("-", "").replace('MUNICIPIUL', '').replace('COMUNA', '').replace('ORAŞ', '').replace("Ă", "A").replace("Ţ", "T").replace("Ă", "A").replace("Ş", "S").replace("Â", "I").replace("Î", "I").lower())
-sd["name_uat"] = (sd["name"] + sd["county"]).transform(lambda s: s.lower().replace(" ", "").replace("-", "").replace("ă", "a").replace("ț", "t").replace("ă", "a").replace("ș", "s").replace("â", "i").replace("î", "i"))
+elect_df["name_uat"] = (elect_df["Uat"] + elect_df["Județ"]).transform(lambda s: s.replace(" ", "").replace("-", "").replace('MUNICIPIUL', '').replace('COMUNA', '').replace('ORAŞ', '').replace("Ă", "A").replace("Ţ", "T").replace("Ă", "A").replace("Ş", "S").replace("Â", "I").replace("Î", "I").lower())
+spatial_df["name_uat"] = (spatial_df["name"] + spatial_df["county"]).transform(lambda s: s.lower().replace(" ", "").replace("-", "").replace("ă", "a").replace("ț", "t").replace("ă", "a").replace("ș", "s").replace("â", "i").replace("î", "i"))
 
-g_ed = g_ed.sort_values("name_uat")
-sd = sd.sort_values("name_uat")
+elect_df = elect_df.sort_values("name_uat")
+spatial_df = spatial_df.sort_values("name_uat")
 
+# data that needs manual correction (see fuzzywuzzy script at the bottom of the page)
+def replaceName(old, new):
+  elect_df.at[elect_df[elect_df["name_uat"] == old].index.values.astype(int)[0], "name_uat"] = new
 
-g_ed.at[g_ed[g_ed["name_uat"] == "bucurestisector1"].index.values.astype(int)[0], "name_uat"] = "bucurestisectorul1bucuresti"
-g_ed.at[g_ed[g_ed["name_uat"] == "bucurestisector2"].index.values.astype(int)[0], "name_uat"] = "bucurestisectorul2bucuresti"
-g_ed.at[g_ed[g_ed["name_uat"] == "bucurestisector3"].index.values.astype(int)[0], "name_uat"] = "bucurestisectorul3bucuresti"
-g_ed.at[g_ed[g_ed["name_uat"] == "bucurestisector4"].index.values.astype(int)[0], "name_uat"] = "bucurestisectorul4bucuresti"
-g_ed.at[g_ed[g_ed["name_uat"] == "bucurestisector5"].index.values.astype(int)[0], "name_uat"] = "bucurestisectorul5bucuresti"
-g_ed.at[g_ed[g_ed["name_uat"] == "bucurestisector6"].index.values.astype(int)[0], "name_uat"] = "bucurestisectorul6bucuresti"
-g_ed.at[g_ed[g_ed["name_uat"] == "hirseștiarges"].index.values.astype(int)[0], "name_uat"] = "hirsestiarges"
-g_ed.at[g_ed[g_ed["name_uat"] == "lungasudejosbihor"].index.values.astype(int)[0], "name_uat"] = "lugasudejosbihor"
-g_ed.at[g_ed[g_ed["name_uat"] == "movrodinteleorman"].index.values.astype(int)[0], "name_uat"] = "mavrodinteleorman"
-g_ed.at[g_ed[g_ed["name_uat"] == "simbatadesusbrasov"].index.values.astype(int)[0], "name_uat"] = "sambatadesusbrasov"
-g_ed.at[g_ed[g_ed["name_uat"] == "sinnicolaurominbihor"].index.values.astype(int)[0], "name_uat"] = "sannicolauromanbihor"
-g_ed.at[g_ed[g_ed["name_uat"] == "unousatumare"].index.values.astype(int)[0], "name_uat"] = "orasunousatumare"
+replaceName("hirseștiarges", "hirsestiarges")
+replaceName("lungasudejosbihor", "lugasudejosbihor")
+replaceName("movrodinteleorman", "mavrodinteleorman")
+replaceName("simbatadesusbrasov", "sambatadesusbrasov")
+replaceName("sinnicolaurominbihor", "sannicolauromanbihor")
+replaceName("unousatumare", "orasunousatumare")
 
-merged = g_ed.merge(sd,
-       left_on = "name_uat",
-       right_on = "name_uat",
-       how="outer")
+for i in range(1, 7):
+  replaceName("bucurestisector" + str(i), "bucurestisectorul" + str(i) + "bucuresti")
 
-party_dict = {
-  1: "PSD",
-  2: "USR Plus",
-  3: "Pro Romania",
-  4: "UDMR",
-  5: "PNL",
-  6: "ALDE",
-  7: "Prodemo",
-  8: "PMP",
-  9: "PSR",
-  10: "PSDI",
-  11: "PRU",
-  12: "UNPR",
-  13: "BUN",
-  14: "Gregoriana-Carmen Tudoran",
-  15: "George-Nicolae Simion",
-  16: "Peter Costea"
-}
+'''
+Part 3. Merge data and calculate new columns for each uat
+ - calculate predominant party
+ - calculate predominant party percentage
+ - calculate predominant party absolute number of votes
+'''
 
-def getParty(*argv):
-  max = 0
-  party = ''
-  for i in range(0, 16):
-    if argv[i] >= max:
-      max = argv[i]
-      party = party_dict[i + 1]
-  return party
+merged = elect_df.merge(spatial_df, left_on = "name_uat", right_on = "name_uat", how="outer")
 
-columns = ["g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10", "g11", "g12", "g13", "g14", "g15", "g16"]
-
-
+# calculate new columns needed for the visualization
 merged["pred_absolute"] = merged[columns].max(axis=1)
 merged["pred_percent"] = round(merged[columns].max(axis=1)/merged[columns].sum(axis=1) * 100, 2)
 merged["pred_party"] = merged[columns].idxmax(axis=1)
 
-del merged["name_uat"]
-del merged["Județ"]
-del merged["Uat"]
+# delete columns that aren't needed anymore
+merged = merged.drop(labels=["name_uat", "Județ", "Uat"], axis=1)
 
-merged["final"] = "a"
+# export data to csv to use it in the map
+merged.to_csv(path_or_buf=url_processed + "election_uat_final.csv", index_label="object_id")
 
-print(merged)
+'''
+Part 4. Prepare data for total results for romania and diaspora
+ - load diaspora election results
+ - calculate totals
+ - export to csv file
+'''
 
-merged.to_csv(url + "election_uat_final.csv")
+ed_abroad = pd.read_csv(url_original + "pv_SR_EUP_FINAL.csv", usecols=columns)
+
+# calculate totals for abroad
+total_abroad = ed_abroad.agg(sum_parties)
+total_abroad["type"] = "Diaspora"
+
+# calculate totals for Romania
+select_merge = merged[columns]
+total_ro = select_merge.agg(sum_parties)
+total_ro["type"] = "Romania"
+
+# calculate final results by adding diaspora votes and votes inside the country
+final = pd.DataFrame(columns=["type"] + columns)
+final = final.append(total_abroad, ignore_index=True).append(total_ro, ignore_index=True)
+total = final.agg("sum")
+total["type"] = "Total"
+final = final.append(total, ignore_index=True)
+
+# save results to a csv file
+final.to_csv(path_or_buf=url_processed + "election_total_results.csv", index=False)
 
 
 '''
-# before we merge, we make a test to see which names don't match 100%
-# these might need manual correction
-from fuzzywuzzy import fuzz
+# before I merged, I made a test to see which names don't match 100%
+# these need manual correction - I replaced the value in one of the
+# files with the value in the other file
 
+from fuzzywuzzy import fuzz
 
 def match_name(name, list_names, min_score=0):
     # -1 score incase we don't get any matches
@@ -106,8 +123,8 @@ def match_name(name, list_names, min_score=0):
     return [max_name, max_score]
 
 
-for name in g_ed["name_uat"].to_list():
-    match = match_name(name, sd['name_uat'].to_list())
+for name in elect_df["name_uat"].to_list():
+    match = match_name(name, spatial_df['name_uat'].to_list())
     if (match[1] < 100):
         print(name, match[0], match[1], name == match[0])
 
