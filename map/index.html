@@ -24,8 +24,22 @@
 
 <body>
   <div id="viewDiv">
-    <div id="results" class="esri-widget"></div>
-    <div id="legend" class="esri-widget"></div>
+    <div id="results" class="esri-widget">
+      <h3>European Parliament Elections 2019 - results in Romania</h3>
+      <div id="results-menu">
+        <button id="results-total-btn">Total</button>
+        <button id="results-diaspora-btn">Diaspora</button>
+        <button id="results-selection-btn"></button>
+      </div>
+      <div id="results-chart"></div>
+      <div id="legend" class="esri-widget"></div>
+      <button id="show-legend">Show legend</button>
+      <p class="footer">Map made by <a target="_blank" href="https://raluca-nicola.net/">Raluca</a> with
+        <a target="_blank" href="https://developers.arcgis.com/javascript/">ArcGIS API for JavaScript</a>,
+        <a target="_blank" href="https://pandas.pydata.org/">Pandas</a> and a bit of
+        <a target="_blank" href="https://www.esri.com/en-us/arcgis/products/arcgis-pro/resources">ArcGIS Pro</a>.
+      </p>
+    </div>
   </div>
   <script>require(["app/main"]);</script>
 </body>

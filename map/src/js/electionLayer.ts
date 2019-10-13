@@ -31,7 +31,7 @@ const renderer = new UniqueValueRenderer({
       valueExpression: "$feature.pred_percent",
       stops: [
         { value: 40, opacity: 0.3, label: "< 40%" },
-        { value: 80, opacity: 1.0, label: "> 80%" }
+        { value: 70, opacity: 1.0, label: "> 70%" }
       ]
     }),
     new SizeVariable({

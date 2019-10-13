@@ -8,9 +8,11 @@ import mainCitiesLayer from "./mainCitiesLayer";
 import electionLayer from "./electionLayer";
 
 import charts from "./charts";
-import Expand from "esri/widgets/Expand";
 import SpatialReference from "esri/geometry/SpatialReference";
 
+import esriRequest from "esri/request";
+
+let legendVisible = false;
 
 // define base layers
 const countiesLayer = new TileLayer({
@@ -54,7 +56,6 @@ const mapView = new MapView({
 });
 
 map.addMany([electionLayer, mainCitiesLayer]);
-
 const lyrViewPromise = mapView.whenLayerView(electionLayer);
 let highlight: any = null;
 
@@ -69,18 +70,19 @@ mapView.on("click", function (event: any) {
         const graphic = result.graphic;
         removeHighlight();
         lyrViewPromise.then(lyrView => highlight = lyrView.highlight(graphic));
-        charts.createInfoChart(graphic.attributes);
+        charts.createSelectionChart(graphic.attributes);
       }
     } else {
       removeHighlight();
-      charts.generateTotalResults();
+      charts.removeSelectionChart();
     }
   }).catch(console.error);
 
 });
 
-charts.generateTotalResults();
-
+esriRequest("./data/election_total_results.json").then(response => {
+  charts.initializeTotalCharts(response.data);
+}).catch(console.error);
 
 lyrViewPromise.then(lyrView => charts.createLegend(lyrView));
 
@@ -91,10 +93,10 @@ function removeHighlight() {
   }
 }
 
-mapView.ui.add("results", "bottom-right");
-const expandWidget = new Expand({
-  view: mapView,
-  content: document.getElementById("legend"),
-  expanded: true
+mapView.ui.add("results", "bottom-left");
+let legendController = document.getElementById("show-legend");
+legendController.addEventListener("click", () => {
+  document.getElementById("legend").style.display = legendVisible ? "none" : "block";
+  legendController.innerHTML = legendVisible ? "Show legend" : "Hide legend";
+  legendVisible = !legendVisible;
 });
-mapView.ui.add(expandWidget, "top-right");

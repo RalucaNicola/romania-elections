@@ -2,18 +2,18 @@
 import { GraphicAttributes } from "./types";
 import partyCodes from "./partyCodes";
 declare var d3: any;
+let total: any;
 
-function createInfoChart(attributes: GraphicAttributes) {
+function _createInfoChart(attributes: GraphicAttributes) {
   const data = _getData(attributes);
   const total = _getTotal(attributes);
+  d3.select("#results-chart").html("");
 
   const barWidth = 45;
-  const width = 350;
+  const width = (7 * (barWidth + 5));
   const height = 150;
-  const margin = 30;
+  const margin = 20;
   const chartHeight = height - margin;
-  d3.select("#results").html("");
-  d3.select("#results").append("div").html(attributes.name + ", " + attributes.county);
   const div = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
@@ -22,25 +22,25 @@ function createInfoChart(attributes: GraphicAttributes) {
     .domain([0, d3.max(data, function (d: any) { return d.value; })]);
   const x = d3.scaleBand()
     .domain(data.map(function (e) { return e.name; }))
-    .range([0, width - margin]);
+    .range([0, width - margin - 15]);
   const xAxis = d3.axisBottom(x);
-  const chart = d3.select("#results").append("svg")
+  const chart = d3.select("#results-chart").append("svg")
     .attr("width", width)
     .attr("height", height);
   const bar = chart.selectAll("g")
     .data(data)
     .enter().append("g")
-    .attr("transform", function (d: any, i: number) { return "translate(" + (i * barWidth + 5).toString() + ",0)"; });
+    .attr("transform", function (d: any, i: number) { return "translate(" + (i * barWidth + barWidth / 8).toString() + ",0)"; });
   bar.append("rect")
     .attr("y", function (d: any) { return y(d.value); })
     .attr("height", function (d: any) { return chartHeight - y(d.value); })
-    .attr("width", barWidth - 10)
+    .attr("width", barWidth - barWidth / 4)
     .attr("fill", function (d: any) { return d.color; })
     .on("mousemove", function (d: any, i: number) {
       div.transition()
         .duration(100)
         .style("opacity", .9);
-      div.html(" " + d.value.toString() + " votes ")
+      div.html(d.value.toString() + " votes")
         .style("left", (d3.event.pageX) + "px")
         .style("top", (d3.event.pageY - 20) + "px");
     })
@@ -54,7 +54,7 @@ function createInfoChart(attributes: GraphicAttributes) {
     .attr("x", 1)
     .attr("y", function (d: any) { return y(d.value) - 15; })
     .attr("dy", ".75em")
-    .text(function (d: any) { return (d.value / total * 100).toFixed(1).toString() + "%"; });
+    .text(function (d: any) { return (d.value / total * 100).toFixed(2).toString() + "%"; });
   chart.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + chartHeight + ")")
@@ -81,7 +81,6 @@ function createLegend(layerView: any) {
   const marginTop = 20;
   const marginLeft = 10;
   const legend = d3.select("#legend");
-  legend.append("div").html("<h3>European Parliament Elections 2019 Results in Romania");
   const width = 280;
   const height = 300;
   const barHeight = 20;
@@ -124,7 +123,7 @@ function createLegend(layerView: any) {
     .text(" - dominant party votes in %")
     .attr("fill", "rgb(100, 100, 100)");
   _generateGuide(hueLegend, "40%", marginLeft, marginTop, marginLeft, marginTop + 7 * (barHeight + barSpacing));
-  _generateGuide(hueLegend, "80%", marginLeft + barWidth, marginTop, marginLeft + barWidth, marginTop + 7 * (barHeight + barSpacing));
+  _generateGuide(hueLegend, "70%", marginLeft + barWidth, marginTop, marginLeft + barWidth, marginTop + 7 * (barHeight + barSpacing));
   const sizeLegend = hueLegend.append("g")
     .attr("transform", function (d: any, i: number) { return "translate(" + marginLeft.toString() + "," + (2.5 * marginTop + 7 * (barHeight + barSpacing)).toString() + ")"; });
   sizeLegend.append("text")
@@ -189,34 +188,54 @@ function _getGradientColor(color: string, hueLegend: any, i: number) {
   return "url(#i-" + i.toString() + ")";
 }
 
-function generateTotalResults() {
-  createInfoChart({
-    g1: 2031585,
-    g2: 1861655,
-    g3: 574408,
-    g4: 473062,
-    g5: 2327988,
-    g6: 368338,
-    g7: 51850,
-    g8: 492099,
-    g9: 38601,
-    g10: 25753,
-    g11: 48889,
-    g12: 52696,
-    g13: 19646,
-    g14: 96721,
-    g15: 104820,
-    g16: 122245,
-    name: "Total votes",
-    county: "Romania",
-    pred_absolute: 0,
-    pred_party: "None",
-    pred_percent: 0
+function initializeTotalCharts(data: any) {
+  let diaspora = data.filter((e: any) => e.type === "Diaspora")[0];
+  let diasporaBtn = document.getElementById("results-diaspora-btn")
+  diasporaBtn.addEventListener("click", _ => {
+    _selectButton("results-diaspora-btn");
+    _createInfoChart(diaspora);
   });
+  total = data.filter((e: any) => e.type === "Total")[0];
+  let totalBtn = document.getElementById("results-total-btn")
+  totalBtn.addEventListener("click", _ => {
+    _selectButton("results-total-btn");
+    _createInfoChart(total);
+  });
+  _selectButton("results-total-btn");
+  _createInfoChart(total);
+}
+
+function createSelectionChart(attributes: GraphicAttributes) {
+  const btn = document.getElementById("results-selection-btn");
+  btn.innerHTML = attributes.name + ", " + attributes.county;
+  btn.style.display = "inline";
+  btn.addEventListener("click", _ => _createInfoChart(attributes));
+  _selectButton("results-selection-btn");
+  _createInfoChart(attributes);
+}
+
+function removeSelectionChart() {
+  _createInfoChart(total);
+  _selectButton("results-total-btn");
+  document.getElementById("results-selection-btn").style.display = "none";
+}
+
+function _selectButton(id: string) {
+  let buttons = document.getElementById("results-menu").getElementsByTagName("button");
+  for (let i = 0; i < buttons.length; i++) {
+    if (buttons[i].id === id) {
+      buttons[i].classList.add("selected");
+    }
+    else {
+      buttons[i].classList.remove("selected");
+    }
+  }
+
 }
 
 export default {
-  createInfoChart,
   createLegend,
-  generateTotalResults
+  initializeTotalCharts,
+  createSelectionChart,
+  removeSelectionChart
 };

@@ -1,3 +1,5 @@
+$dark: rgb(100, 100, 100);
+$light: rgb(200, 200, 200);
 html,
 body,
 #viewDiv {
@@ -5,6 +7,7 @@ body,
   margin: 0;
   height: 100%;
   width: 100%;
+
 }
 
 div.tooltip {
@@ -15,8 +18,72 @@ div.tooltip {
   pointer-events: none;
 }
 
-#results, #legend {
+button {
+  font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
+}
+
+#results {
   padding: 1em;
+  min-width: 340px;
+  max-width: 350px;
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media only screen and (min-height: 600px) {
+  #results {
+    max-height: none;
+  }
+}
+
+#results-selection-btn, #legend {
+  display: none;
+}
+
+#results-menu {
+  button {
+    border: none;
+    background: white;
+  }
+
+  button.selected, button:hover {
+    background: $dark;
+    color: white;
+  }
+}
+
+#results-chart {
+  padding-bottom: 0.5em;
+}
+
+a {
+  text-decoration: none;
+  border-bottom: 1px dashed $dark;
+  cursor: pointer;
+  color: $dark;
+}
+
+#show-legend {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: $dark;
+}
+
+#show-legend:hover {
+  background: $dark;
+  color: white;
+}
+
+a:hover {
+  color: $light;
+  border-bottom: 1px dashed $light;
+}
+.footer {
+  font-size: 0.8em;
+  margin: 0;
 }
 
 svg {
