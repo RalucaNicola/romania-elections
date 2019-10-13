@@ -1,11 +1,23 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
-  <title>European Parliament - Mai 2019 elections in Romania</title>
+  <meta name="viewport" content="initial-scale=1" />
+  <meta name="keywords" content="election, map, european parliament, romania" />
+  <meta name="description" content="An interactive map of European Parliament elections in Romania in 2019" />
+  <meta name="language" content="EN">
+  <meta name="author" content="Raluca Nicola">
+  <meta name="og:title" content="An interactive map of European Parliament elections in Romania in 2019" />
+  <meta name="og:type" content="map" />
+  <meta name="og:url" content="https://raluca-nicola.net/romania-elections/image/image.png" />
+  <meta name="og:image" content="https://raluca-nicola.net/romania-elections/image/image.png" />
+  <meta name="og:description" content="An interactive map of European Parliament elections in Romania in 2019" />
+
+  <title>An interactive map of European Parliament elections in Romania in 2019</title>
   <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/css/main.css">
   <link rel="stylesheet" href="./src/css/main.css">
+
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <script>
     var locationPath = location.pathname.replace(/\/[^\/]+$/, "/");
@@ -23,21 +35,28 @@
 </head>
 
 <body>
-  <div id="viewDiv">
-    <div id="results" class="esri-widget">
-      <h3>European Parliament Elections 2019 - results in Romania</h3>
-      <div id="results-menu">
+  <div role="main" id="viewDiv"
+    aria-label="A proportional symbol map showing predominant parties in Romania at European Elections 2019">
+    <div id="results" class="esri-widget" role="region" aria-label="Panel with more information">
+      <h1>European Parliament Elections 2019 - results in Romania</h1>
+      <div role="region" id="results-menu" aria-label="Types of results">
         <button id="results-total-btn">Total</button>
         <button id="results-diaspora-btn">Diaspora</button>
         <button id="results-selection-btn"></button>
       </div>
-      <div id="results-chart"></div>
-      <div id="legend" class="esri-widget"></div>
+      <div role="region" id="results-chart" aria-label="Bar charts displaying the results"></div>
+      <div role="region" id="legend" class="esri-widget" aria-label="Legend for the map"></div>
       <button id="show-legend">Show legend</button>
-      <p class="footer">Map made by <a target="_blank" href="https://raluca-nicola.net/">Raluca</a> with
-        <a target="_blank" href="https://developers.arcgis.com/javascript/">ArcGIS API for JavaScript</a>,
-        <a target="_blank" href="https://pandas.pydata.org/">Pandas</a> and a bit of
-        <a target="_blank" href="https://www.esri.com/en-us/arcgis/products/arcgis-pro/resources">ArcGIS Pro</a>.
+      <p class="footer" aria-label="Map impressum">Map made by <a target="_blank" aria-label="website of the map author"
+          rel="noopener" href="https://raluca-nicola.net/">Raluca</a> with
+        <a target="_blank" aria-label="web tool used to create the map" rel="noopener"
+          href="https://developers.arcgis.com/javascript/">ArcGIS API for
+          JavaScript</a>,
+        <a target="_blank" aria-label="tool used to process the data" rel="noopener"
+          href="https://pandas.pydata.org/">Pandas</a> and a bit of
+        <a target="_blank" aria-label="tool used to process the data" rel="noopener"
+          href="https://www.esri.com/en-us/arcgis/products/arcgis-pro/">ArcGIS
+          Pro</a>.
       </p>
     </div>
   </div>
