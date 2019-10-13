@@ -97,7 +97,7 @@ total["type"] = "Total"
 final = final.append(total, ignore_index=True)
 
 # save results to a csv file
-final.to_csv(path_or_buf=url_processed + "election_total_results.csv", index=False)
+final.to_json(path_or_buf=url_processed + "election_total_results.json", orient="records")
 
 
 '''
