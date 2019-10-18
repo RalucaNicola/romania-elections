@@ -1,5 +1,7 @@
 # The colors of Romania - European Parliament election results, May 2019
 
+![screenshot](./screenshot.png)
+
 [View it live](https://raluca-nicola.net/romania-elections)
 
 [Fork it on Github](https://github.com/RalucaNicola/romania-elections)
