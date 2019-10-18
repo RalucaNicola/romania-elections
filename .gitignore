@@ -3,3 +3,6 @@
 **/css/**/*.css*
 **/*.idea
 **/*.DS_Store
+**/dist/*
+**/stats.json
+**/package-lock.json

@@ -1,12 +1,15 @@
 
-import { GraphicAttributes } from "./types";
+import { GraphicAttributes, PartyAttributes } from "./types";
 import partyCodes from "./partyCodes";
-declare var d3: any;
-let total: any;
+import * as d3 from "d3";
+import CSVLayerView from 'esri/views/layers/CSVLayerView';
+import FeatureFilter from 'esri/views/layers/support/FeatureFilter';
+import FeatureEffect from 'esri/views/layers/support/FeatureEffect';
+let totalResult: GraphicAttributes;
 
 function _createInfoChart(attributes: GraphicAttributes) {
   const data = _getData(attributes);
-  const total = _getTotal(attributes);
+  const totalVotes = _getTotal(attributes);
   d3.select("#results-chart").html("");
 
   const barWidth = 50;
@@ -20,7 +23,7 @@ function _createInfoChart(attributes: GraphicAttributes) {
     .style("opacity", 0);
   const y = d3.scaleLinear()
     .range([chartHeight, verticalMargin])
-    .domain([0, d3.max(data, function (d: any) { return d.value; })]);
+    .domain([0, d3.max(data, (d: any) => d.value)]);
   const x = d3.scaleBand()
     .domain(data.map(function (e) { return e.name; }))
     .range([0, width]);
@@ -31,13 +34,13 @@ function _createInfoChart(attributes: GraphicAttributes) {
   const bar = chart.selectAll("g")
     .data(data)
     .enter().append("g")
-    .attr("transform", function (d: any, i: number) { return "translate(" + (i * barWidth + barWidth / 8).toString() + ",0)"; });
+    .attr("transform", function (d, i: number) { return "translate(" + (i * barWidth + barWidth / 8).toString() + ",0)"; });
   bar.append("rect")
-    .attr("y", function (d: any) { return y(d.value); })
-    .attr("height", function (d: any) { return chartHeight - y(d.value); })
+    .attr("y", function (d) { return y(d.value); })
+    .attr("height", function (d) { return chartHeight - y(d.value); })
     .attr("width", barWidth - barWidth / 4)
-    .attr("fill", function (d: any) { return d.color; })
-    .on("mousemove", function (d: any, i: number) {
+    .attr("fill", function (d) { return d.color; })
+    .on("mousemove", function (d, i: number) {
       tooltip.transition()
         .duration(100)
         .style("opacity", .9)
@@ -46,7 +49,7 @@ function _createInfoChart(attributes: GraphicAttributes) {
         .style("left", (d3.event.pageX) + "px")
         .style("top", (d3.event.pageY - 30) + "px");
     })
-    .on("mouseout", function (d: any, i: number) {
+    .on("mouseout", function (d, i: number) {
       tooltip.transition()
         .duration(300)
         .style("opacity", 0)
@@ -55,9 +58,9 @@ function _createInfoChart(attributes: GraphicAttributes) {
     });
   bar.append("text")
     .attr("x", 1)
-    .attr("y", function (d: any) { return y(d.value) - 15; })
+    .attr("y", function (d) { return y(d.value) - 15; })
     .attr("dy", ".75em")
-    .text(function (d: any) { return (d.value / total * 100).toFixed(2).toString() + "%"; });
+    .text(function (d) { return (d.value / totalVotes * 100).toFixed(2).toString() + "%"; });
   chart.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + chartHeight + ")")
@@ -66,21 +69,21 @@ function _createInfoChart(attributes: GraphicAttributes) {
 
 function _getData(attr: GraphicAttributes) {
 
-  return partyCodes.map(function (e: any) {
+  return partyCodes.map(function (e: PartyAttributes) {
     e.value = attr[e.field];
     return e;
   });
 }
 
 function _getTotal(attr: GraphicAttributes) {
-  let total = 0;
+  let totalAttr = 0;
   for (let i = 1; i <= 16; i++) {
-    total += attr["g" + i.toString()];
+    totalAttr += attr["g" + i.toString()];
   }
-  return total;
+  return totalAttr;
 }
 
-function createLegend(layerView: any) {
+function createLegend(layerView: CSVLayerView) {
   const marginTop = 20;
   const marginLeft = 10;
   const legend = d3.select("#legend");
@@ -95,29 +98,27 @@ function createLegend(layerView: any) {
   const bar = hueLegend.selectAll("g")
     .data(partyCodes)
     .enter().append("g")
-    .attr("transform", function (d: any, i: number) { return "translate(" + marginLeft + "," + marginTop.toString() + ")"; });
+    .attr("transform", _ => { return "translate(" + marginLeft + "," + marginTop.toString() + ")"; });
 
   bar.append("rect")
-    .attr("y", function (d: any, i: number) { return barSpacing + i * (barHeight + barSpacing); })
+    .attr("y", (d, i: number) => { return barSpacing + i * (barHeight + barSpacing); })
     .attr("height", barHeight)
     .attr("width", barWidth)
-    .attr("fill", function (d: any, i: number) { return _getGradientColor(d.color, hueLegend, i); })
-    .on("mouseover", function (d: any) {
-      layerView.effect = {
-        filter: {
+    .attr("fill", (d, i: number) => { return _getGradientColor(d.color, hueLegend, i); })
+    .on("mouseover", d => {
+      layerView.effect = new FeatureEffect({
+        filter: new FeatureFilter({
           where: "pred_party = '" + d.field + "'"
-        },
+        }),
         excludedEffect: "grayscale(100%) opacity(20%)"
-      };
+      });
     })
-    .on("mouseout", function (d: any) {
-      layerView.effect = null;
-    });
+    .on("mouseout", _ => layerView.effect = new FeatureEffect());
 
   bar.append("text")
     .attr("x", barWidth + (barSpacing * 3))
-    .attr("y", function (d: any, i: number) { return (i + 1) * (barHeight + barSpacing) - barSpacing; })
-    .text(function (d: any) {
+    .attr("y", function (d, i: number) { return (i + 1) * (barHeight + barSpacing) - barSpacing; })
+    .text(d => {
       return d.name;
     });
   hueLegend.append("text")
@@ -128,7 +129,7 @@ function createLegend(layerView: any) {
   _generateGuide(hueLegend, "40%", marginLeft, marginTop, marginLeft, marginTop + 7 * (barHeight + barSpacing));
   _generateGuide(hueLegend, "70%", marginLeft + barWidth, marginTop, marginLeft + barWidth, marginTop + 7 * (barHeight + barSpacing));
   const sizeLegend = hueLegend.append("g")
-    .attr("transform", function (d: any, i: number) { return "translate(" + marginLeft.toString() + "," + (2.5 * marginTop + 7 * (barHeight + barSpacing)).toString() + ")"; });
+    .attr("transform", function (d, i: number) { return "translate(" + marginLeft.toString() + "," + (2.5 * marginTop + 7 * (barHeight + barSpacing)).toString() + ")"; });
   sizeLegend.append("text")
     .attr("x", 0)
     .attr("y", 0)
@@ -139,7 +140,9 @@ function createLegend(layerView: any) {
   _generateCircleGroup(sizeLegend, " > 15000 votes", 20);
 }
 
-function _generateCircleGroup(sizeLegend: any, text: string, radius: number) {
+function _generateCircleGroup(sizeLegend: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
+  text: string,
+  radius: number) {
   const top = 60;
   const container = sizeLegend.append("g");
   container.append("circle")
@@ -161,7 +164,7 @@ function _generateCircleGroup(sizeLegend: any, text: string, radius: number) {
     .text(text)
     .attr("fill", "rgb(100, 100, 100)");
 }
-function _generateGuide(container: any, percentage: string, x1: number, y1: number, x2: number, y2: number) {
+function _generateGuide(container: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>, percentage: string, x1: number, y1: number, x2: number, y2: number) {
   container.append("text")
     .attr("x", x1 + 5)
     .attr("y", y1 - 5)
@@ -177,7 +180,7 @@ function _generateGuide(container: any, percentage: string, x1: number, y1: numb
     .attr("stroke-dasharray", "5");
 }
 
-function _getGradientColor(color: string, hueLegend: any, i: number) {
+function _getGradientColor(color: string, hueLegend: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>, i: number) {
   const linearGradient = hueLegend.append("defs").append("linearGradient");
   linearGradient.attr("id", "i-" + i.toString());
   linearGradient.append("stop")
@@ -191,25 +194,25 @@ function _getGradientColor(color: string, hueLegend: any, i: number) {
   return "url(#i-" + i.toString() + ")";
 }
 
-function initializeTotalCharts(data: any) {
-  let diaspora = data.filter((e: any) => e.type === "Diaspora")[0];
-  let diasporaBtn = document.getElementById("results-diaspora-btn")
+function initializeTotalCharts(data: Array<GraphicAttributes>) {
+  let diaspora = data.filter((e: GraphicAttributes) => e.type === "Diaspora")[0];
+  let diasporaBtn = document.getElementById("results-diaspora-btn") as HTMLElement
   diasporaBtn.addEventListener("click", _ => {
     _selectButton("results-diaspora-btn");
     _createInfoChart(diaspora);
   });
-  total = data.filter((e: any) => e.type === "Total")[0];
-  let totalBtn = document.getElementById("results-total-btn")
+  totalResult = data.filter((e: GraphicAttributes) => e.type === "Total")[0];
+  let totalBtn = document.getElementById("results-total-btn") as HTMLElement
   totalBtn.addEventListener("click", _ => {
     _selectButton("results-total-btn");
-    _createInfoChart(total);
+    _createInfoChart(totalResult);
   });
   _selectButton("results-total-btn");
-  _createInfoChart(total);
+  _createInfoChart(totalResult);
 }
 
 function createSelectionChart(attributes: GraphicAttributes) {
-  const btn = document.getElementById("results-selection-btn");
+  const btn = document.getElementById("results-selection-btn") as HTMLElement;
   btn.innerHTML = attributes.name + ", " + attributes.county;
   btn.style.display = "inline";
   btn.addEventListener("click", _ => _createInfoChart(attributes));
@@ -218,13 +221,13 @@ function createSelectionChart(attributes: GraphicAttributes) {
 }
 
 function removeSelectionChart() {
-  _createInfoChart(total);
+  _createInfoChart(totalResult);
   _selectButton("results-total-btn");
-  document.getElementById("results-selection-btn").style.display = "none";
+  (document.getElementById("results-selection-btn") as HTMLElement).style.display = "none";
 }
 
 function _selectButton(id: string) {
-  let buttons = document.getElementById("results-menu").getElementsByTagName("button");
+  let buttons = (document.getElementById("results-menu") as HTMLElement).getElementsByTagName("button");
   for (let i = 0; i < buttons.length; i++) {
     if (buttons[i].id === id) {
       buttons[i].classList.add("selected");

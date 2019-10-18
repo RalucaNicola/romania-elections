@@ -1,8 +1,11 @@
-# Elections map in Romania
+# Elections map in Romania - usage
 
-## Usage
+```
+npm install
 
-1. Clone the repo and `npm install` dependencies
-2. `npm run dev` to compile `src/js/*.ts` and `src/css/*.sccs` files in the same folder and watch for changes
-3. launch `index.html` in your browser of choice.
-4. `npm run lint` to run [TSLint](https://github.com/palantir/tslint) on TypeScript files.
+# run local dev server - starts automatically on localhost:8080
+npm start
+
+# create a production build
+npm run build
+```

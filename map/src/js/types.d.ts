@@ -21,4 +21,12 @@ export interface GraphicAttributes {
   pred_absolute: number;
   pred_party: string;
   pred_percent: number;
+  type: "Diaspora" | "Total";
+}
+
+export interface PartyAttributes {
+  name: string;
+  field: string;
+  color: string;
+  value: number;
 }

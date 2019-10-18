@@ -1,37 +1,39 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
-    "inlineSourceMap": false,
-    "jsx": "react",
+    "module": "amd",
     "lib": [
       "dom",
-      "es5",
-      "es2015.iterable",
       "es2015.promise",
-      "es2015.symbol",
-      "es2015.symbol.wellknown",
-      "scripthost"
+      "es5",
+      "es6"
     ],
-    "module": "amd",
-    "noEmitHelpers": true,
-    "noEmitOnError": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noImplicitUseStrict": true,
-    "noStrictGenericChecks": true,
-    "noUnusedLocals": true,
-    "jsxFactory": "tsx",
-    "esModuleInterop": true,
-    "suppressImplicitAnyIndexErrors": true,
     "target": "es5",
-    "baseUrl": ".",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "jsx": "react",
+    "jsxFactory": "tsx",
     "moduleResolution": "node",
-    "types": [ "arcgis-js-api", "dojo" ]
+    "esModuleInterop": true,
+    "isolatedModules": false,
+    "experimentalDecorators": true,
+    "declaration": false,
+    "noLib": false,
+    "preserveConstEnums": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "strictNullChecks": true,
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noEmitOnError": false,
+    "noUnusedLocals": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "types": [
+      "arcgis-js-api",
+      "moment",
+      "d3"
+    ]
   },
   "include": [
-    "./src/js/*"
-  ],
-  "exclude": [
-    "node_modules"
+    "src/**/*"
   ]
 }

@@ -1,0 +1,107 @@
+$darker: rgb(70, 70, 70);
+$dark: rgb(100, 100, 100);
+$light: rgb(200, 200, 200);
+html,
+body,
+#app,
+#viewDiv {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  font-size: 14px;
+  color: $darker;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  font: 1em sans-serif;
+  background: $dark;
+  color: white;
+  padding: 0.5em;
+  pointer-events: none;
+  display: none;
+}
+
+button {
+  font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1em;
+}
+
+#results {
+  padding: 1em;
+  padding-bottom: 0.3em;
+  max-width: 350px;
+  max-height: 320px;
+  overflow: auto;
+
+  h1 {
+    margin-top: 0;
+    font-size: 1.3em;
+  }
+
+  #results-selection-btn, #legend {
+    display: none;
+  }
+
+  #results-menu {
+    button {
+      border: none;
+      background: white;
+    }
+
+    button.selected, button:hover {
+      background: $dark;
+      color: white;
+    }
+  }
+
+  #results-chart {
+    padding-bottom: 0.5em;
+  }
+
+  a {
+    text-decoration: none;
+    border-bottom: 1px dashed $darker;
+    cursor: pointer;
+    color: $darker;
+  }
+
+  #show-legend {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: $darker;
+  }
+
+  #show-legend:hover {
+    background: $dark;
+    color: white;
+  }
+
+  a:hover {
+    color: $light;
+    border-bottom: 1px dashed $light;
+  }
+  .footer {
+    font-size: 0.8em;
+    margin: 0;
+    padding-top: 1em;
+  }
+
+  svg text {
+    font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    fill: $darker;
+  }
+}
+
+@media only screen and (min-height: 650px) {
+  #results {
+    max-height: none;
+    max-width: none;
+  }
+}
+
+
