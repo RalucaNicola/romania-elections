@@ -39,7 +39,7 @@ const hillshadeLayer = new TileLayer({
 
 const map = new Map({
   basemap: new Basemap({
-    baseLayers: [countryBorders, countiesLayer, municipalitiesLayer, hillshadeLayer]
+    baseLayers: [countryBorders, countiesLayer, hillshadeLayer, municipalitiesLayer]
   })
 });
 
