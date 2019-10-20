@@ -13,6 +13,8 @@ import charts from "./js/charts";
 import SpatialReference from "esri/geometry/SpatialReference";
 
 import esriRequest from "esri/request";
+import Handle from 'esri/core/Handles';
+import CSVLayerView from 'esri/views/layers/CSVLayerView';
 
 let legendVisible = false;
 
@@ -59,19 +61,19 @@ const mapView = new MapView({
 
 map.addMany([electionLayer, mainCitiesLayer]);
 const lyrViewPromise = mapView.whenLayerView(electionLayer);
-let highlight: any = null;
+let highlight: Handle;
 
-mapView.on("click", function (event: any) {
-  mapView.hitTest(event).then(function (response) {
+mapView.on("click", event => {
+  mapView.hitTest(event).then(response => {
 
     if (response.results.length) {
-      const result = response.results.filter(function (result) {
+      const result = response.results.filter(result => {
         return result.graphic.layer === electionLayer;
       })[0];
       if (result) {
         const graphic = result.graphic;
         removeHighlight();
-        lyrViewPromise.then(lyrView => highlight = lyrView.highlight(graphic));
+        lyrViewPromise.then(lyrView => highlight = <Handle>lyrView.highlight(graphic));
         charts.createSelectionChart(graphic.attributes);
       }
     } else {
@@ -91,7 +93,6 @@ lyrViewPromise.then(lyrView => charts.createLegend(lyrView));
 function removeHighlight() {
   if (highlight) {
     highlight.remove();
-    highlight = null;
   }
 }
 

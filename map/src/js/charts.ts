@@ -1,4 +1,3 @@
-
 import { GraphicAttributes, PartyAttributes } from "./types";
 import partyCodes from "./partyCodes";
 import * as d3 from "d3";
@@ -25,7 +24,7 @@ function _createInfoChart(attributes: GraphicAttributes) {
     .range([chartHeight, verticalMargin])
     .domain([0, d3.max(data, (d: any) => d.value)]);
   const x = d3.scaleBand()
-    .domain(data.map(function (e) { return e.name; }))
+    .domain(data.map(e => { return e.name; }))
     .range([0, width]);
   const xAxis = d3.axisBottom(x);
   const chart = d3.select("#results-chart").append("svg")
@@ -34,13 +33,13 @@ function _createInfoChart(attributes: GraphicAttributes) {
   const bar = chart.selectAll("g")
     .data(data)
     .enter().append("g")
-    .attr("transform", function (d, i: number) { return "translate(" + (i * barWidth + barWidth / 8).toString() + ",0)"; });
+    .attr("transform", (d, i: number) => { return "translate(" + (i * barWidth + barWidth / 8).toString() + ",0)"; });
   bar.append("rect")
-    .attr("y", function (d) { return y(d.value); })
-    .attr("height", function (d) { return chartHeight - y(d.value); })
+    .attr("y", d => { return y(d.value); })
+    .attr("height", d => { return chartHeight - y(d.value); })
     .attr("width", barWidth - barWidth / 4)
-    .attr("fill", function (d) { return d.color; })
-    .on("mousemove", function (d, i: number) {
+    .attr("fill", d => { return d.color; })
+    .on("mousemove", (d, i: number) => {
       tooltip.transition()
         .duration(100)
         .style("opacity", .9)
@@ -49,7 +48,7 @@ function _createInfoChart(attributes: GraphicAttributes) {
         .style("left", (d3.event.pageX) + "px")
         .style("top", (d3.event.pageY - 30) + "px");
     })
-    .on("mouseout", function (d, i: number) {
+    .on("mouseout", (d, i: number) => {
       tooltip.transition()
         .duration(300)
         .style("opacity", 0)
@@ -58,9 +57,9 @@ function _createInfoChart(attributes: GraphicAttributes) {
     });
   bar.append("text")
     .attr("x", 1)
-    .attr("y", function (d) { return y(d.value) - 15; })
+    .attr("y", d => { return y(d.value) - 15; })
     .attr("dy", ".75em")
-    .text(function (d) { return (d.value / totalVotes * 100).toFixed(2).toString() + "%"; });
+    .text(d => { return (d.value / totalVotes * 100).toFixed(2).toString() + "%"; });
   chart.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + chartHeight + ")")
@@ -69,7 +68,7 @@ function _createInfoChart(attributes: GraphicAttributes) {
 
 function _getData(attr: GraphicAttributes) {
 
-  return partyCodes.map(function (e: PartyAttributes) {
+  return partyCodes.map((e: PartyAttributes) => {
     e.value = attr[e.field];
     return e;
   });
@@ -117,7 +116,7 @@ function createLegend(layerView: CSVLayerView) {
 
   bar.append("text")
     .attr("x", barWidth + (barSpacing * 3))
-    .attr("y", function (d, i: number) { return (i + 1) * (barHeight + barSpacing) - barSpacing; })
+    .attr("y", (d, i: number) => { return (i + 1) * (barHeight + barSpacing) - barSpacing; })
     .text(d => {
       return d.name;
     });
@@ -129,7 +128,7 @@ function createLegend(layerView: CSVLayerView) {
   _generateGuide(hueLegend, "40%", marginLeft, marginTop, marginLeft, marginTop + 7 * (barHeight + barSpacing));
   _generateGuide(hueLegend, "70%", marginLeft + barWidth, marginTop, marginLeft + barWidth, marginTop + 7 * (barHeight + barSpacing));
   const sizeLegend = hueLegend.append("g")
-    .attr("transform", function (d, i: number) { return "translate(" + marginLeft.toString() + "," + (2.5 * marginTop + 7 * (barHeight + barSpacing)).toString() + ")"; });
+    .attr("transform", (d, i: number) => { return "translate(" + marginLeft.toString() + "," + (2.5 * marginTop + 7 * (barHeight + barSpacing)).toString() + ")"; });
   sizeLegend.append("text")
     .attr("x", 0)
     .attr("y", 0)
