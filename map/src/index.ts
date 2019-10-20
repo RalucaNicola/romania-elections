@@ -14,7 +14,6 @@ import SpatialReference from "esri/geometry/SpatialReference";
 
 import esriRequest from "esri/request";
 import Handle from 'esri/core/Handles';
-import CSVLayerView from 'esri/views/layers/CSVLayerView';
 
 let legendVisible = false;
 
