@@ -11,8 +11,8 @@ url_processed = r"/Library/WebServer/Documents/romania-elections/map/data/"
 spatial_df = pd.read_csv(url_original + "ro_uat_point.csv", usecols=["name", "county", "Longitude", "Latitude"])
 
 # election dataset - results from election
-columns = ["g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10", "g11", "g12", "g13", "g14", "g15", "g16"]
-elect_df = pd.read_csv(url_original + "pv_RO_EUP_FINAL.csv", usecols=["Județ", "Uat"] + columns)
+columns = ["g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10", "g11", "g12", "g13", "g14"]
+elect_df = pd.read_csv(url_original + "pv_RO_PRSD_FINAL.csv", usecols=["Județ", "Uat"] + columns)
 
 '''
 Part 2. Prepare data for merge:
@@ -42,14 +42,15 @@ def replaceName(old, new):
   elect_df.at[elect_df[elect_df["name_uat"] == old].index.values.astype(int)[0], "name_uat"] = new
 
 replaceName("hirseștiarges", "hirsestiarges")
-replaceName("lungasudejosbihor", "lugasudejosbihor")
-replaceName("movrodinteleorman", "mavrodinteleorman")
+#replaceName("lungasudejosbihor", "lugasudejosbihor") // corrected in the original dataset
+#replaceName("movrodinteleorman", "mavrodinteleorman") // corrected in the original dataset
 replaceName("simbatadesusbrasov", "sambatadesusbrasov")
 replaceName("sinnicolaurominbihor", "sannicolauromanbihor")
 replaceName("unousatumare", "orasunousatumare")
 
 for i in range(1, 7):
-  replaceName("bucurestisector" + str(i), "bucurestisectorul" + str(i) + "bucuresti")
+  replaceName("bucurestibucurestisector" + str(i), "bucurestisectorul" + str(i) + "bucuresti")
+
 
 '''
 Part 3. Merge data and calculate new columns for each uat
@@ -65,11 +66,13 @@ merged["pred_absolute"] = merged[columns].max(axis=1)
 merged["pred_percent"] = round(merged[columns].max(axis=1)/merged[columns].sum(axis=1) * 100, 2)
 merged["pred_party"] = merged[columns].idxmax(axis=1)
 
+print (merged.pred_party.unique())
+
 # delete columns that aren't needed anymore
 merged = merged.drop(labels=["name_uat", "Județ", "Uat"], axis=1)
 
 # export data to csv to use it in the map
-merged.to_csv(path_or_buf=url_processed + "election_uat_final.csv", index_label="object_id")
+merged.to_csv(path_or_buf=url_processed + "president_election_uat_final.csv", index_label="object_id")
 
 '''
 Part 4. Prepare data for total results for romania and diaspora
@@ -78,7 +81,7 @@ Part 4. Prepare data for total results for romania and diaspora
  - export to csv file
 '''
 
-ed_abroad = pd.read_csv(url_original + "pv_SR_EUP_FINAL.csv", usecols=columns)
+ed_abroad = pd.read_csv(url_original + "pv_SR_PRSD_PART.csv", usecols=columns)
 
 # calculate totals for abroad
 total_abroad = ed_abroad.agg(sum_parties)
@@ -97,14 +100,14 @@ total["type"] = "Total"
 final = final.append(total, ignore_index=True)
 
 # save results to a csv file
-final.to_json(path_or_buf=url_processed + "election_total_results.json", orient="records")
+final.to_json(path_or_buf=url_processed + "president_election_total_results.json", orient="records")
 
 
-'''
+
 # before I merged, I made a test to see which names don't match 100%
 # these need manual correction - I replaced the value in one of the
 # files with the value in the other file
-
+'''
 from fuzzywuzzy import fuzz
 
 def match_name(name, list_names, min_score=0):
@@ -127,6 +130,7 @@ for name in elect_df["name_uat"].to_list():
     match = match_name(name, spatial_df['name_uat'].to_list())
     if (match[1] < 100):
         print(name, match[0], match[1], name == match[0])
+
 
 ## results
 

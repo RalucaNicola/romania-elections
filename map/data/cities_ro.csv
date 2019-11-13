@@ -1,5 +1,5 @@
 city,lat,lng,country,iso2,admin,capital,population,population_proper
-Bucharest,44.433333,26.1,Romania,RO,Bucureşti,primary,1942000,1742194
+Bucureşti,44.433333,26.1,Romania,RO,Bucureşti,primary,1942000,1742194
 Iaşi,47.166667,27.6,Romania,RO,Iaşi,admin,325914,325914
 Cluj-Napoca,46.766667,23.6,Romania,RO,Cluj,admin,316748,282141
 Timişoara,45.749444,21.227222,Romania,RO,Timiş,admin,315053,304097

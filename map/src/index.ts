@@ -83,7 +83,7 @@ mapView.on("click", event => {
 
 });
 
-esriRequest("./data/election_total_results.json").then(response => {
+esriRequest("./data/president_election_total_results.json").then(response => {
   charts.initializeTotalCharts(response.data);
 }).catch(console.error);
 
@@ -100,6 +100,6 @@ let legendController = document.getElementById("show-legend") as HTMLElement;
 let legendContainer = document.getElementById("legend") as HTMLElement;
 legendController.addEventListener("click", () => {
   legendContainer.style.display = legendVisible ? "none" : "block";
-  legendController.innerHTML = legendVisible ? "Show legend" : "Hide legend";
+  legendController.innerHTML = legendVisible ? "Arată legenda" : "Ascunde legenda";
   legendVisible = !legendVisible;
 });

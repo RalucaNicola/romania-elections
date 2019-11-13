@@ -30,7 +30,7 @@ const renderer = new UniqueValueRenderer({
     new OpacityVariable({
       valueExpression: "$feature.pred_percent",
       stops: [
-        { value: 40, opacity: 0.3, label: "< 40%" },
+        { value: 40, opacity: 0.5, label: "< 40%" },
         { value: 70, opacity: 1.0, label: "> 70%" }
       ]
     }),
@@ -45,9 +45,9 @@ const renderer = new UniqueValueRenderer({
 });
 
 const electionLayer = new CSVLayer({
-  url: "./data/election_uat_final.csv",
+  url: "./data/president_election_uat_final.csv",
   copyright: "BEC, ANCPI, geo-spatial.org",
-  title: "European Parliament Elections 2019 - Results in Romania",
+  title: "Romania - Presidential Elections 2019",
   renderer: renderer
 });
 

@@ -11,7 +11,7 @@ function _createInfoChart(attributes: GraphicAttributes) {
   const totalVotes = _getTotal(attributes);
   d3.select("#results-chart").html("");
 
-  const barWidth = 50;
+  const barWidth = 60;
   const width = (7 * barWidth);
   const height = 150;
   const verticalMargin = 20;
@@ -24,7 +24,7 @@ function _createInfoChart(attributes: GraphicAttributes) {
     .range([chartHeight, verticalMargin])
     .domain([0, d3.max(data, (d: any) => d.value)]);
   const x = d3.scaleBand()
-    .domain(data.map(e => { return e.name; }))
+    .domain(data.map(e => { const names = e.name.split(" "); return names[names.length - 1]; }))
     .range([0, width]);
   const xAxis = d3.axisBottom(x);
   const chart = d3.select("#results-chart").append("svg")
@@ -76,7 +76,7 @@ function _getData(attr: GraphicAttributes) {
 
 function _getTotal(attr: GraphicAttributes) {
   let totalAttr = 0;
-  for (let i = 1; i <= 16; i++) {
+  for (let i = 1; i <= 14; i++) {
     totalAttr += attr["g" + i.toString()];
   }
   return totalAttr;
@@ -123,7 +123,7 @@ function createLegend(layerView: CSVLayerView) {
   hueLegend.append("text")
     .attr("x", marginLeft + barWidth + 25)
     .attr("y", marginTop - 5)
-    .text(" - dominant party votes in %")
+    .text(" - procent voturi partid dominant")
     .attr("fill", "rgb(100, 100, 100)");
   _generateGuide(hueLegend, "40%", marginLeft, marginTop, marginLeft, marginTop + 7 * (barHeight + barSpacing));
   _generateGuide(hueLegend, "70%", marginLeft + barWidth, marginTop, marginLeft + barWidth, marginTop + 7 * (barHeight + barSpacing));
@@ -132,7 +132,7 @@ function createLegend(layerView: CSVLayerView) {
   sizeLegend.append("text")
     .attr("x", 0)
     .attr("y", 0)
-    .text("Number of votes for the dominant party")
+    .text("Număr de voturi partid dominant")
     .attr("fill", "rgb(100, 100, 100)");
   _generateCircleGroup(sizeLegend, " < 100 votes", 5);
   _generateCircleGroup(sizeLegend, " 8000 votes", 13);
@@ -185,7 +185,7 @@ function _getGradientColor(color: string, hueLegend: d3.Selection<SVGSVGElement,
   linearGradient.append("stop")
     .attr("offset", "0%")
     .style("stop-color", color)
-    .style("stop-opacity", "0.2");
+    .style("stop-opacity", "0.5");
   linearGradient.append("stop")
     .attr("offset", "100%")
     .style("stop-color", color)

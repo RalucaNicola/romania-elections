@@ -1,29 +1,29 @@
 export default [{
-  name: "PSD",
+  name: "Klaus Werner Iohannis",
   field: "g1",
+  color: "rgb(224, 191, 0)"
+}, {
+  name: "Vasilica-Viorica Dăncilă",
+  field: "g5",
   color: "rgb(253, 127, 111)"
 }, {
-  name: "USR PLUS",
-  field: "g2",
+  name: "Ilie-Dan Barna",
+  field: "g3",
   color: "rgb(0, 169, 230)"
 }, {
-  name: "UDMR",
+  name: "Mircea Diaconu",
+  field: "g10",
+  color: "rgb(142, 112, 219)"
+}, {
+  name: "Theodor Paleologu",
+  field: "g2",
+  color: "rgb(118, 196, 185)"
+}, {
+  name: "Hunor Kelemen",
   field: "g4",
   color: "rgb(167, 198, 5)"
 }, {
-  name: "PNL",
-  field: "g5",
-  color: "rgb(224, 191, 0)"
-}, {
-  name: "PRORomânia",
-  field: "g3",
+  name: "Alexandru Cumpănaşu",
+  field: "g14",
   color: "rgb(255, 138, 7)"
-}, {
-  name: "PMP",
-  field: "g8",
-  color: "rgb(118, 196, 185)"
-}, {
-  name: "ALDE",
-  field: "g6",
-  color: "rgb(142, 112, 219)"
 }];

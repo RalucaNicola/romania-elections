@@ -14,8 +14,6 @@ export interface GraphicAttributes {
   g12: number;
   g13: number;
   g14: number;
-  g15: number;
-  g16: number;
   name: string;
   county: string;
   pred_absolute: number;
