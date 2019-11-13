@@ -44,7 +44,7 @@ function _createInfoChart(attributes: GraphicAttributes) {
         .duration(100)
         .style("opacity", .9)
         .style("display", "inherit");
-      tooltip.html(d.value.toLocaleString() + " votes")
+      tooltip.html(d.value.toLocaleString() + " voturi")
         .style("left", (d3.event.pageX) + "px")
         .style("top", (d3.event.pageY - 30) + "px");
     })
@@ -134,9 +134,9 @@ function createLegend(layerView: CSVLayerView) {
     .attr("y", 0)
     .text("Număr de voturi partid dominant")
     .attr("fill", "rgb(100, 100, 100)");
-  _generateCircleGroup(sizeLegend, " < 100 votes", 5);
-  _generateCircleGroup(sizeLegend, " 8000 votes", 13);
-  _generateCircleGroup(sizeLegend, " > 15000 votes", 20);
+  _generateCircleGroup(sizeLegend, " < 100 voturi", 5);
+  _generateCircleGroup(sizeLegend, " 8000 voturi", 13);
+  _generateCircleGroup(sizeLegend, " > 15000 voturi", 20);
 }
 
 function _generateCircleGroup(sizeLegend: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
